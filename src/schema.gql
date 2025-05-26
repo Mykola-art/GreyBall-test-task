@@ -1,0 +1,378 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+"""Input for creating a new event in the MMA platform."""
+input CreateEventInput {
+  """Date of the event in ISO format (e.g., 2025-09-15)."""
+  date: String!
+
+  """Location of the event (e.g., Las Vegas, NV)."""
+  location: String!
+
+  """Name of the event (e.g., UFC 300)."""
+  name: String!
+}
+
+"""Input for creating a new fight in the MMA platform."""
+input CreateFightInput {
+  """Unique identifier of the event where the fight takes place (UUID)."""
+  eventId: ID!
+
+  """Unique identifier of the first fighter (UUID)."""
+  fighter1Id: ID!
+
+  """Unique identifier of the second fighter (UUID)."""
+  fighter2Id: ID!
+
+  """Result of the fight (e.g., KO, SUBMISSION, DECISION, DRAW). Optional."""
+  result: FightResult
+
+  """
+  Unique identifier of the winning fighter (UUID). Optional, required if result is not DRAW.
+  """
+  winnerId: ID
+}
+
+"""Input for creating a new fighter in the MMA platform."""
+input CreateFighterInput {
+  """Number of draws the fighter has. Optional, defaults to 0."""
+  draws: Int
+
+  """First name of the fighter."""
+  firstName: String!
+
+  """Number of knockouts the fighter has achieved. Optional, defaults to 0."""
+  knockouts: Int
+
+  """Last name of the fighter."""
+  lastName: String!
+
+  """Number of losses the fighter has. Optional, defaults to 0."""
+  losses: Int
+
+  """
+  Number of submissions the fighter has achieved. Optional, defaults to 0.
+  """
+  submissions: Int
+
+  """
+  Weight class of the fighter. Must be one of: Flyweight, Bantamweight, Featherweight, Lightweight, Welterweight, Middleweight, Light Heavyweight, Heavyweight.
+  """
+  weightClass: String!
+
+  """Number of wins the fighter has. Optional, defaults to 0."""
+  wins: Int
+}
+
+"""Input for creating a new ranking in the MMA platform."""
+input CreateRankingInput {
+  """Unique identifier of the fighter to rank (UUID)."""
+  fighterId: ID!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+"""
+An event in the MMA platform, representing a scheduled fight night with multiple fights.
+"""
+type Event {
+  """Date of the event."""
+  date: DateTime!
+
+  """List of fights scheduled for this event."""
+  fights: [Fight!]
+
+  """Unique identifier of the event (UUID)."""
+  id: ID!
+
+  """Location where the event takes place (e.g., Las Vegas, NV)."""
+  location: String!
+
+  """Name of the event (e.g., UFC 300)."""
+  name: String!
+}
+
+"""
+A fight in the MMA platform, representing a match between two fighters at an event.
+"""
+type Fight {
+  """The event where this fight takes place."""
+  event: Event!
+
+  """The first fighter in the match."""
+  fighter1: Fighter!
+
+  """The second fighter in the match."""
+  fighter2: Fighter!
+
+  """Unique identifier of the fight (UUID)."""
+  id: ID!
+
+  """Result of the fight (e.g., KO, SUBMISSION, DECISION, DRAW)."""
+  result: FightResult
+
+  """Unique identifier of the winning fighter (UUID), if applicable."""
+  winnerId: ID
+}
+
+"""
+Possible outcomes of a fight: KO (knockout), SUBMISSION, DECISION, or DRAW.
+"""
+enum FightResult {
+  DECISION
+  DRAW
+  KO
+  SUBMISSION
+}
+
+"""
+A fighter in the MMA platform, representing an athlete with fight records and rankings.
+"""
+type Fighter {
+  """Number of draws the fighter has."""
+  draws: Int!
+
+  """List of fights where the fighter is Fighter 1."""
+  fightsAsFighter1: [Fight!]
+
+  """List of fights where the fighter is Fighter 2."""
+  fightsAsFighter2: [Fight!]
+
+  """First name of the fighter."""
+  firstName: String!
+
+  """Unique identifier of the fighter (UUID)."""
+  id: ID!
+
+  """Number of knockouts the fighter has achieved."""
+  knockouts: Int!
+
+  """Last name of the fighter."""
+  lastName: String!
+
+  """Number of losses the fighter has."""
+  losses: Int!
+
+  """List of rankings associated with the fighter."""
+  rankings: [Ranking!]
+
+  """Number of submissions the fighter has achieved."""
+  submissions: Int!
+
+  """Weight class of the fighter (e.g., Lightweight, Heavyweight)."""
+  weightClass: String!
+
+  """Number of wins the fighter has."""
+  wins: Int!
+}
+
+type Mutation {
+  """Create a new event with the specified details."""
+  createEvent(createEventInput: CreateEventInput!): Event!
+
+  """Create a new fight with the specified fighters, event, and result."""
+  createFight(createFightInput: CreateFightInput!): Fight!
+
+  """Create a new fighter with the specified details."""
+  createFighter(createFighterInput: CreateFighterInput!): Fighter!
+
+  """
+  Create a new ranking for a fighter. Points, win percentage, and rank are calculated server-side.
+  """
+  createRanking(createRankingInput: CreateRankingInput!): Ranking!
+
+  """Delete an event by its ID. Returns true if successful."""
+  removeEvent(
+    """Unique identifier of the event to delete (UUID)."""
+    id: ID!
+  ): Boolean!
+
+  """Delete a fight by its ID. Returns true if successful."""
+  removeFight(
+    """Unique identifier of the fight to delete (UUID)."""
+    id: ID!
+  ): Boolean!
+
+  """Delete a fighter by their ID. Returns true if successful."""
+  removeFighter(
+    """Unique identifier of the fighter to delete (UUID)."""
+    id: ID!
+  ): Boolean!
+
+  """Delete a ranking by its ID. Returns true if successful."""
+  removeRanking(
+    """Unique identifier of the ranking to delete (UUID)."""
+    id: ID!
+  ): Boolean!
+
+  """Update an existing event’s details by its ID."""
+  updateEvent(updateEventInput: UpdateEventInput!): Event!
+
+  """Update an existing fight’s details by its ID."""
+  updateFight(updateFightInput: UpdateFightInput!): Fight!
+
+  """Update an existing fighter’s details by their ID."""
+  updateFighter(updateFighterInput: UpdateFighterInput!): Fighter!
+
+  """
+  Update an existing ranking’s points and win percentage by its ID. Rank is recalculated automatically.
+  """
+  updateRanking(updateRankingInput: UpdateRankingInput!): Ranking!
+}
+
+type Query {
+  """Retrieve a single event by its ID."""
+  event(
+    """Unique identifier of the event (UUID)."""
+    id: ID!
+  ): Event!
+
+  """Retrieve a list of all events."""
+  events: [Event!]!
+
+  """Retrieve a single fight by its ID."""
+  fight(
+    """Unique identifier of the fight (UUID)."""
+    id: ID!
+  ): Fight!
+
+  """Retrieve a single fighter by their ID."""
+  fighter(
+    """Unique identifier of the fighter (UUID)."""
+    id: ID!
+  ): Fighter!
+
+  """Retrieve a list of all fighters."""
+  fighters: [Fighter!]!
+
+  """Retrieve all fighters in a specific weight class."""
+  fightersByWeightClass(
+    """Weight class to filter fighters by (e.g., Lightweight)."""
+    weightClass: String!
+  ): [Fighter!]!
+
+  """Retrieve a list of all fights."""
+  fights: [Fight!]!
+
+  """Retrieve all fights for a specific event."""
+  fightsByEvent(
+    """Unique identifier of the event (UUID)."""
+    eventId: ID!
+  ): [Fight!]!
+
+  """Retrieve a single ranking by its ID."""
+  ranking(
+    """Unique identifier of the ranking (UUID)."""
+    id: ID!
+  ): Ranking!
+
+  """Retrieve a list of all rankings."""
+  rankings: [Ranking!]!
+
+  """Retrieve all rankings for a specific weight class, ordered by rank."""
+  rankingsByWeightClass(
+    """Weight class to filter rankings by (e.g., Lightweight)."""
+    weightClass: String!
+  ): [Ranking!]!
+
+  """Retrieve all upcoming events (events with a future date)."""
+  upcomingEvents: [Event!]!
+}
+
+"""
+A ranking in the MMA platform, representing a fighter’s standing in a weight class.
+"""
+type Ranking {
+  """The fighter associated with this ranking."""
+  fighter: Fighter!
+
+  """Unique identifier of the ranking (UUID)."""
+  id: ID!
+
+  """
+  Points accumulated by the fighter, based on wins, knockouts, submissions, and draws.
+  """
+  points: Int!
+
+  """Rank position within the weight class (1 is the highest)."""
+  rank: Int!
+
+  """Weight class for this ranking (e.g., Lightweight, Heavyweight)."""
+  weightClass: String!
+
+  """Win percentage of the fighter (wins / total fights)."""
+  winPercentage: Float!
+}
+
+input UpdateEventInput {
+  """Date of the event in ISO format (e.g., 2025-09-15)."""
+  date: String
+  id: ID!
+
+  """Location of the event (e.g., Las Vegas, NV)."""
+  location: String
+
+  """Name of the event (e.g., UFC 300)."""
+  name: String
+}
+
+input UpdateFightInput {
+  """Unique identifier of the event where the fight takes place (UUID)."""
+  eventId: ID
+
+  """Unique identifier of the first fighter (UUID)."""
+  fighter1Id: ID
+
+  """Unique identifier of the second fighter (UUID)."""
+  fighter2Id: ID
+  id: ID!
+
+  """Result of the fight (e.g., KO, SUBMISSION, DECISION, DRAW). Optional."""
+  result: FightResult
+
+  """
+  Unique identifier of the winning fighter (UUID). Optional, required if result is not DRAW.
+  """
+  winnerId: ID
+}
+
+input UpdateFighterInput {
+  """Number of draws the fighter has. Optional, defaults to 0."""
+  draws: Int
+
+  """First name of the fighter."""
+  firstName: String
+  id: ID!
+
+  """Number of knockouts the fighter has achieved. Optional, defaults to 0."""
+  knockouts: Int
+
+  """Last name of the fighter."""
+  lastName: String
+
+  """Number of losses the fighter has. Optional, defaults to 0."""
+  losses: Int
+
+  """
+  Number of submissions the fighter has achieved. Optional, defaults to 0.
+  """
+  submissions: Int
+
+  """
+  Weight class of the fighter. Must be one of: Flyweight, Bantamweight, Featherweight, Lightweight, Welterweight, Middleweight, Light Heavyweight, Heavyweight.
+  """
+  weightClass: String
+
+  """Number of wins the fighter has. Optional, defaults to 0."""
+  wins: Int
+}
+
+input UpdateRankingInput {
+  id: ID!
+  points: Int
+  winPercentage: Float
+}
